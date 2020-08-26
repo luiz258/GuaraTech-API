@@ -5,5 +5,18 @@
     <UserSecretsId>643e19d1-c4d2-42d5-b107-34ad6e248951</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Models\Course.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Models\Course.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+  </ItemGroup>
+
 
 </Project>
