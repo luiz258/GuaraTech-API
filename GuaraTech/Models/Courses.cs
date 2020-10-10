@@ -6,19 +6,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GuaraTech.DTO
+namespace GuaraTech.Models
 {
-    public class CourseDto
+    public class Course : Entity
     {
-    
-        public Guid Id { get; set; }
-
-        [Required(ErrorMessage ="O campo {0} é obrigatorio")]
         public String Title { get; set; }
-
         public String Details { get; set; }
-
-        [Required(ErrorMessage = "O campo {0} é obrigatorio")]
         public StateCourseEnuns StateCourse { get; set; }
+        public IEnumerable<Lesson> Lessons { get; set; }
+
     }
 }

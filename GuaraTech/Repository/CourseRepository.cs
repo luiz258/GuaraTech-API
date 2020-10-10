@@ -1,4 +1,7 @@
-﻿using GuaraTech.DTO;
+﻿using Dapper;
+using GuaraTech.DTO;
+using GuaraTech.Infra;
+using GuaraTech.Models;
 using GuaraTech.Repository.IRepository;
 using System;
 using System.Collections.Generic;
@@ -9,14 +12,26 @@ namespace GuaraTech.Repository
 {
     public class CourseRepository : ICourseRepository
     {
-        public Task Create(CourseDto course)
+        private readonly DBContext _db;
+
+        public CourseRepository(DBContext db)
         {
-            throw new NotImplementedException();
+            _db = db;
+        }
+        public Task Create(Course course)
+        {
+            return _db.Connection.ExecuteAsync("INSERT INTO COURSE (Id, Title, Details, StateCourse) VALUES (@Id, @Title, @Details, @StateCourse)",
+                new {
+                    @Id = course.Id,
+                    @Title = course.Title,
+                    @Details = course.Details,
+                    @StateCourse = course.StateCourse
+                });
         }
 
         public Task<IEnumerable<CourseDto>> ListCourse()
         {
-            throw new NotImplementedException();
+            return _db.Connection.QueryAsync<CourseDto>("SELECT * FROM COURSE");
         }
     }
 }

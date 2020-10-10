@@ -6,15 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Course.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Models\Course.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.7" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
