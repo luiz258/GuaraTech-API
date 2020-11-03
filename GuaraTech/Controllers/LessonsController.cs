@@ -20,7 +20,7 @@ namespace GuaraTech.Controllers
             _repLessons = repLessons;
         }
 
-        [Route("v1/lessons/listLessons{idCourses}")]
+        [Route("v1/lessons/listLessons/{idCourses}")]
         [HttpGet]
         public async Task<IEnumerable<LessonDto>> ListLessons(Guid idCourses)
         {

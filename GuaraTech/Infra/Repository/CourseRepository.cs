@@ -29,6 +29,21 @@ namespace GuaraTech.Repository
                 });
         }
 
+        public Task Delete(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Edit(CourseDto course)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CourseDto> GetCourseById(Guid Id)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<IEnumerable<CourseDto>> ListCourse()
         {
             return _db.Connection.QueryAsync<CourseDto>("SELECT * FROM COURSE");

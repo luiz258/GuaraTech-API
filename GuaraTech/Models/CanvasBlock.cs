@@ -8,7 +8,7 @@ namespace GuaraTech.Models
 {
     public class CanvasBlock
     {
-        public CanvasEnuns block { get; set; }
-        public String description { get; set; }
+        public string Block { get; set; }
+        public String Description { get; set; }
     }
 }

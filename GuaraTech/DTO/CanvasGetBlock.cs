@@ -5,15 +5,16 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GuaraTech.Models
+namespace GuaraTech.DTO
 {
-    public class Canvas
+    public class CanvasGetBlock
     {
+        [Required(ErrorMessage = "O campo {0} é obrigatório !")]
         public Guid Id { get; set; }
 
-        public Guid UserId { get; set; }
+        public Guid IdUser { get; set; }
 
-        public String Title { get; set; }
+        public string Title { get; set; }
 
         public String ValueOffer { get; set; }
 
