@@ -58,44 +58,84 @@ namespace GuaraTech.Repository
             }
         }
 
-        public Task UpdateCommunicationChannels(Canvas canvas)
+        public async Task UpdateCommunicationChannels(Canvas canvas)
         {
-            throw new NotImplementedException();
+            await _db.Connection.ExecuteAsync("Update CANVAS set CommunicationChannels=@Description where ID = @Id", new
+            {
+                @Description = canvas.Description,
+                @Id = canvas.Id
+
+            });
         }
 
-        public Task UpdateCost(Canvas canvas)
+        public async Task UpdateCost(Canvas canvas)
         {
-            throw new NotImplementedException();
+            await _db.Connection.ExecuteAsync("Update CANVAS set Cost=@Description where ID = @Id", new
+            {
+                @Description = canvas.Description,
+                @Id = canvas.Id
+
+            });
         }
 
-        public Task UpdateCustomerRelationship(Canvas canvas)
+        public async Task UpdateCustomerRelationship(Canvas canvas)
         {
-            throw new NotImplementedException();
+            await _db.Connection.ExecuteAsync("Update CANVAS set CustomerRelationship=@Description where ID = @Id", new
+            {
+                @Description = canvas.Description,
+                @Id = canvas.Id
+
+            });
         }
 
-        public Task UpdateCustomerSegment(Canvas canvas)
+        public async Task UpdateCustomerSegment(Canvas canvas)
         {
-            throw new NotImplementedException();
+            await _db.Connection.ExecuteAsync("Update CANVAS set CustomerSegment=@Description where ID = @Id", new
+            {
+                @Description = canvas.Description,
+                @Id = canvas.Id
+
+            });
         }
 
-        public Task UpdateKeyFeatures(Canvas canvas)
+        public async Task UpdateKeyFeatures(Canvas canvas)
         {
-            throw new NotImplementedException();
+            await _db.Connection.ExecuteAsync("Update CANVAS set KeyFeatures=@Description where ID = @Id", new
+            {
+                @Description = canvas.Description,
+                @Id = canvas.Id
+
+            });
         }
 
-        public Task UpdateMainActivities(Canvas canvas)
+        public async Task UpdateMainActivities(Canvas canvas)
         {
-            throw new NotImplementedException();
+            await _db.Connection.ExecuteAsync("Update CANVAS set MainActivities=@Description where ID = @Id", new
+            {
+                @Description = canvas.Description,
+                @Id = canvas.Id
+
+            });
         }
 
-        public Task UpdatePartnerships(Canvas canvas)
+        public async Task UpdatePartnerships(Canvas canvas)
         {
-            throw new NotImplementedException();
+            await _db.Connection.ExecuteAsync("Update CANVAS set Partnerships=@Description where ID = @Id", new
+            {
+                @Description = canvas.Description,
+                @Id = canvas.Id
+
+            });
         }
 
-        public Task UpdateRecipe(Canvas canvas)
+        public async Task UpdateRecipe(Canvas canvas)
         {
-            throw new NotImplementedException();
+            await _db.Connection.ExecuteAsync("Update CANVAS set Recipe=@Description where ID = @Id", new
+            {
+                @Description = canvas.Description,
+                @Id = canvas.Id
+
+            });
         }
 
         public async Task UpdateValueOffer(Canvas canvas)
