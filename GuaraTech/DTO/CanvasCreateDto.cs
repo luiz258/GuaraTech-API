@@ -10,9 +10,7 @@ namespace GuaraTech.DTO
     public class CanvasCreateDto:Entity
     {
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório !")]
-        public Guid UserId { get; set; }
-
+        
         [Required(ErrorMessage = "O campo {0} é obrigatório !")]
         [StringLength(65, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 2)]
         public String Title { get; set; }

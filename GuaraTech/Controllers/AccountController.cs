@@ -32,14 +32,14 @@ namespace GuaraTech.Controllers
             var email = await _repAccount.ValidateEmail(model.EmailUser);
 
             if (!email)
-                return Ok(new { message = "Email não cadastrado!" });
+                return Ok(new { message = "Email não cadastrado!", success = false });
 
             // Recupera o usuário
             var user = await _repAccount.Authenticate(model);
 
             // Verifica se o usuário existe
             if (user == null)
-                return Ok(new { message = "Usuário inválido" });
+                return Ok(new { message = "Usuário inválido", success = false });
 
             // Gera o Token
             if (user.PasswordUser == encryptPassword(model.PasswordUser)) {
@@ -53,11 +53,13 @@ namespace GuaraTech.Controllers
                 {
                     message = "Login efetuada com sucesso !",
                     user = user,
-                    token = token
+                    token = token,
+                    success = true
+
                 });
             }
 
-            return Ok(new { message = "Senha inválida" });
+            return Ok(new { message = "Senha inválida", success = false });
 
 
 
@@ -91,11 +93,20 @@ namespace GuaraTech.Controllers
                 return Ok(new { message = "Email já cadastrado!" });
 
             var password = encryptPassword(model.PasswordUser);
-            var userRegister = new User {FullName = model.FullName, Document = model.Document, EmailUser = model.EmailUser, PasswordUser = password, RoleId = model.RoleId , StateAccount = "1" };
+            var userRegister = new User {
+                FullName = model.FullName, 
+                Document = model.Document, 
+                EmailUser = model.EmailUser,
+                PasswordUser = password,
+                RoleId = model.RoleId ,
+                StateAccount = "1", 
+                Avatar = model.Avatar,
+                
+            };
 
              await _repAccount.CreateUser(userRegister);
 
-            return Ok(new { message = "Usuário cadastrado !" });
+            return Ok(new { message = "Usuário cadastrado !", success = true });
         }
 
     }

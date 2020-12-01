@@ -12,6 +12,8 @@ namespace GuaraTech.Repository.IRepository
         Task Create(Canvas canvas);
         Task Update(Canvas canvas);
         Task<CanvasGetBlock> GetCanvasById(Guid id);
+        Task<CanvasDetailsDto> GetDetailsCanvas(Guid id);
+        Task<IEnumerable<CanvasCardListDto>> CanvasCardList(Guid id);
         Task<Canvas> GetCanvasBlock(Guid id);
 
 

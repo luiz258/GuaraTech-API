@@ -19,6 +19,7 @@ namespace GuaraTech.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim(ClaimTypes.Name, user.EmailUser.ToString()),
+                     new Claim("Id", user.Id.ToString()),
                     new Claim(ClaimTypes.Role, user.RoleId.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),

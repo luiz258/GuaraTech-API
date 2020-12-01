@@ -8,6 +8,8 @@ using GuaraTech.Hubs;
 using GuaraTech.Infra.Repository.IRepository;
 using GuaraTech.Models;
 using GuaraTech.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -15,215 +17,269 @@ namespace GuaraTech.Controllers
 {
     public class CanvasController : Controller
     {
-        private readonly ICanvasRepository _repCavas;
+        private readonly ICanvasRepository _repCanvas;
+        private readonly IAccountRepository _repAccount;
         private readonly ICanvasTeamRepository _repTeam;
         private readonly IHubContext<StreamingHub> _streaming;
-        public CanvasController(ICanvasRepository repCavas, IHubContext<StreamingHub> streaming, ICanvasTeamRepository repTeam)
+        private readonly IHttpContextAccessor _accessor;
+        public CanvasController(ICanvasRepository repCavas, 
+            IHubContext<StreamingHub> streaming, 
+            ICanvasTeamRepository repTeam,
+            IAccountRepository repAccount,
+            IHttpContextAccessor accessor,
+            ICanvasRepository repCanvas
+            )
         {
-             _repTeam = repTeam; 
-            _repCavas = repCavas;
+             _repTeam = repTeam;
+            _repAccount = repAccount; 
+            _repCanvas = repCanvas;
             _streaming = streaming;
+            _accessor = accessor;
         }
 
 
         [HttpGet]
-        [Route("v1/canvas/get/{block}/{Id}")]
-        public async Task<CanvasGetBlock> GetCanvasById(Guid id)
-
+        [Route("v1/canvas-get/{idCanvas}")]
+        [Authorize]
+        public async Task<CanvasDetailsDto> GetCanvasById(Guid idCanvas)
         {
-            var getCanvas = await _repCavas.GetCanvasById(id);
+            var getCanvasById = await _repCanvas.GetDetailsCanvas(idCanvas);
+            return getCanvasById;
+        }
+
+        [HttpGet]
+        [Route("v1/canvas-card-list")]
+        [Authorize]
+        public async Task<IEnumerable<CanvasCardListDto>> CanvasCardList()
+        {
+            var id = Guid.Parse(_accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value);
+            var getCanvas = await _repCanvas.CanvasCardList(id);
             return getCanvas;
         }
 
 
+
         [HttpPost]
         [Route("v1/canvas/create")]
-       public async Task<IActionResult> CreateCanvas([FromBody] CanvasCreateDto canvasDto)
+        [Authorize]
+        public async Task<IActionResult> CreateCanvas([FromBody] CanvasCreateDto canvasDto)
         {
+            //var b = User.Claims;
+             //var UserId = User.Claims.Where(x => x.Type == "nameid").FirstOrDefault().Value;
+            var Userid = _accessor.HttpContext.User.Claims.Where(a =>a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
 
-            var canvas = new Canvas { Id = canvasDto.Id, UserId = canvasDto.UserId, Title = canvasDto.Title };
-             await _repCavas.Create(canvas);
+            var user = await _repAccount.GetUserById(id);
+
+            if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
+
+            var canvas = new Canvas { Id = canvasDto.Id, UserId = id, Title = canvasDto.Title, CommunicationChannels = "", Cost =" ", CustomerRelationship =" ", CustomerSegment = " ", Description =" ", KeyFeatures = " ", MainActivities = " ", Partnerships = " ", Recipe = " ", ValueOffer= " " };
+             await _repCanvas.Create(canvas);
            
             return Ok(new { message = "Salvo com sucesso !" });
         }
 
-        [HttpPut]
-        [Route("v1/canvas/edit")]
-        public async Task<IActionResult> EditCanvas([FromBody] CanvasEditDto canvasDto)
-        {
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
-            if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
-
-            var canvasBlock = new CanvasBlock {  Description = canvasDto.Description };
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
-
-            await _repCavas.Update(canvas);
-            return Ok(new { message = "Salvo com sucesso !", success = true });
-        }
 
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/value-offer")]
         public async Task<IActionResult> CanvasValueOffer([FromBody] CanvasEditDto canvasDto)
         {
-              var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-             var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+             var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
              if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
             
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser)  || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id)  || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id,  Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas,  Description = canvasDto.Description };
 
-            await _repCavas.UpdateValueOffer(canvas);
+            await _repCanvas.UpdateValueOffer(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/customer-segment")]
         public async Task<IActionResult> CanvasCustomerSegment([FromBody] CanvasEditDto canvasDto)
         {
-            var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+            var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
             if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
 
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser) || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id) || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas, Description = canvasDto.Description };
 
-            await _repCavas.UpdateCustomerSegment(canvas);
+            await _repCanvas.UpdateCustomerSegment(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/customer-relationship")]
         public async Task<IActionResult> CanvasCustomerRelationship([FromBody] CanvasEditDto canvasDto)
         {
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
 
-            var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+            var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
             if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
 
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser) || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id) || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas, Description = canvasDto.Description };
 
-            await _repCavas.UpdateCustomerRelationship(canvas);
+            await _repCanvas.UpdateCustomerRelationship(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/key-features")]
         public async Task<IActionResult> CanvasKeyFeatures([FromBody] CanvasEditDto canvasDto)
         {
-            var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+            var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
             if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
 
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser) || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id) || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas, Description = canvasDto.Description };
 
-            await _repCavas.UpdateKeyFeatures(canvas);
+            await _repCanvas.UpdateKeyFeatures(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/main-activities")]
         public async Task<IActionResult> CanvasMainActivities([FromBody] CanvasEditDto canvasDto)
         {
-            var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+            var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
             if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
 
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser) || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id) || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas, Description = canvasDto.Description };
 
-            await _repCavas.UpdateMainActivities(canvas);
+            await _repCanvas.UpdateMainActivities(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/canvas-partnerships")]
         public async Task<IActionResult> CanvasPartnerships([FromBody] CanvasEditDto canvasDto)
         {
-            var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+            var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
             if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
 
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser) || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id) || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas, Description = canvasDto.Description };
 
-            await _repCavas.UpdatePartnerships(canvas);
+            await _repCanvas.UpdatePartnerships(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/recipe")]
         public async Task<IActionResult> CanvasRecipe([FromBody] CanvasEditDto canvasDto)
         {
-            var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+            var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
             if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
 
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser) || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id) || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas, Description = canvasDto.Description };
 
-            await _repCavas.UpdateRecipe(canvas);
+            await _repCanvas.UpdateRecipe(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
 
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/cost")]
         public async Task<IActionResult> CanvasCost([FromBody] CanvasEditDto canvasDto)
         {
-            var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            if (id == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
+
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+            var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
             if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
 
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser) || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id) || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas, Description = canvasDto.Description };
 
-            await _repCavas.UpdateCost(canvas);
+            await _repCanvas.UpdateCost(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
 
         [HttpPut]
+        [Authorize]
         [Route("v1/canvas/communication-channels")]
         public async Task<IActionResult> CanvasCommunicationChannels([FromBody] CanvasEditDto canvasDto)
         {
-            var team = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = canvasDto.IdUser };
-            var canvaslist = await _repCavas.GetCanvasById(canvasDto.Id);
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            var team = new TeamCanvas { IdCanvas = canvasDto.IdCanvas, IdUserGuests = id };
+            var canvaslist = await _repCanvas.GetCanvasById(canvasDto.IdCanvas);
             if (canvaslist == null) return NotFound(new { message = "Canvas não existe!", success = false });
 
             var teamList = await _repTeam.SearchUsersCanvas(team);
-            var validadeTeam = teamList.Where(x => x.IdUserGuests == canvasDto.IdUser);
+            var validadeTeam = teamList.Where(x => x.IdUserGuests == id);
 
-            if (validadeTeam.Equals(canvasDto.IdUser) || canvaslist.IdUser != canvasDto.IdUser) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
+            if (validadeTeam.Equals(id) || canvaslist.IdUser != id) return NotFound(new { message = "Usuario não faz parte do time !", success = false });
 
-            var canvas = new Canvas { UserId = canvasDto.IdUser, Id = canvasDto.Id, Description = canvasDto.Description };
+            var canvas = new Canvas { UserId = id, Id = canvasDto.IdCanvas, Description = canvasDto.Description };
 
-            await _repCavas.UpdateCommunicationChannels(canvas);
+            await _repCanvas.UpdateCommunicationChannels(canvas);
             return Ok(new { message = "Salvo com sucesso !", success = true });
         }
 
@@ -232,6 +288,7 @@ namespace GuaraTech.Controllers
         //Team Business
 
         [HttpGet]
+        [Authorize]
         [Route("v1/canvas/team")]
         public async Task<IEnumerable<TeamCanvas>> GetTeam(TeamCanvas team)
         {
@@ -240,10 +297,14 @@ namespace GuaraTech.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("v1/canvas/add-team")]
         public async Task<IActionResult> AddUserOnTeam([FromBody] TeamCanvasDto teamDto)
         {
-            var team = new TeamCanvas { IdCanvas = teamDto.IdCanvas, IdUserGuests = teamDto.IdUser };
+            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var id = Guid.Parse(Userid);
+
+            var team = new TeamCanvas { IdCanvas = teamDto.IdCanvas, IdUserGuests = id };
             
               var checkQuantityMembersOnCanvas = await _repTeam.GetCanvas(team.IdCanvas);
               var CheckUserTeam = await _repTeam.SearchUsersCanvas(team);

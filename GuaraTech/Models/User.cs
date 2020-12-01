@@ -11,13 +11,19 @@ namespace GuaraTech.Models
     {
         [Required]
         public String FullName { get; set; }
+
         [Required]
         public String EmailUser  { get; set; }
         [Required]
-        public String PasswordUser  { get; set; }
+        public String PasswordUser  { get; set; } 
+
+        public String Avatar  { get; set; } 
+
         [Required]
         public String  Document { get; set; }
+
         public String RoleId { get; set; }
+
         public String StateAccount { get; set; }
     }
 }

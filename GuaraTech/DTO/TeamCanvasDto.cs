@@ -11,8 +11,8 @@ namespace GuaraTech.DTO
         [Required(ErrorMessage = "O campo {0} é obrigatório !")]
         public Guid IdCanvas { get; set; }
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório !")]
-        public Guid IdUser { get; set; }
+        //[Required(ErrorMessage = "O campo {0} é obrigatório !")]
+        //public Guid IdUser { get; set; }
 
     }
 }

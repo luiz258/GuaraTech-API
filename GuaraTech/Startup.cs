@@ -16,6 +16,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.PlatformAbstractions;
 using GuaraTech.Hubs;
 using GuaraTech.Infra.Repository.IRepository;
+using Microsoft.AspNetCore.Http;
 
 namespace GuaraTech
 {
@@ -39,6 +40,7 @@ namespace GuaraTech
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<DBContext, DBContext>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<ICourseRepository, CourseRepository>();
             services.AddTransient<ICanvasRepository, CanvasRepository>();
@@ -59,31 +61,31 @@ namespace GuaraTech
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
 
-            //.AddJwtBearer(x =>
-            //{
-            //    x.RequireHttpsMetadata = false;
-            //    x.SaveToken = true;
-            //    x.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuerSigningKey = true,
-            //        IssuerSigningKey = new SymmetricSecurityKey(key),
-            //        ValidateIssuer = false,
-            //        ValidateAudience = false
-            //    };
-            //})
-            .AddJwtBearer(options =>
+            .AddJwtBearer(x =>
             {
-                
-                options.Authority = "https://securetoken.google.com/guara-tech";
-                options.TokenValidationParameters = new TokenValidationParameters
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidIssuer = "https://securetoken.google.com/guara-tech",
-                    ValidateAudience = true,
-                    ValidAudience = "guara-tech",
-                    ValidateLifetime = true
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
                 };
             });
+            //.AddJwtBearer(options =>
+            //{
+                
+            //    options.Authority = "https://securetoken.google.com/guara-tech";
+            //    options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidIssuer = "https://securetoken.google.com/guara-tech",
+            //        ValidateAudience = true,
+            //        ValidAudience = "guara-tech",
+            //        ValidateLifetime = true
+            //    };
+            //});
 
             services.AddSwaggerGen(c =>
             {

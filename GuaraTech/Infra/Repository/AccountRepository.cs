@@ -29,7 +29,7 @@ namespace GuaraTech.Repository
             try
             {
 
-                return _db.Connection.ExecuteAsync("INSERT INTO ACCOUNT (ID, EmailUser, PasswordUser, FullName, document, RoleId, StateAccount) VALUES  (@ID, @EmailUser, @PasswordUser, @FullName, @Document, @RoleId, @StateAccount)"
+                return _db.Connection.ExecuteAsync("INSERT INTO ACCOUNT (ID, EmailUser, PasswordUser, FullName, document, RoleId, StateAccount, Avatar) VALUES  (@ID, @EmailUser, @PasswordUser, @FullName, @Document, @RoleId, @StateAccount, @Avatar)"
                     , new
                     {
                         @ID = user.Id,
@@ -38,7 +38,8 @@ namespace GuaraTech.Repository
                         @FullName = user.FullName,
                         @Document = user.Document,
                         @RoleId = user.RoleId,
-                        @StateAccount = user.StateAccount
+                        @StateAccount = user.StateAccount,
+                        @Avatar = user.Avatar
                     });
             }
             catch (Exception )
@@ -51,6 +52,16 @@ namespace GuaraTech.Repository
         public Task<User> GetAccount(string EmailUser)
         {
             return _db.Connection.QueryFirstAsync<User>("SELECT * FROM ACCOUNT WHERE EmailUser = @EmailUser ", new { @EmailUser = EmailUser });
+        }
+
+        public Task<User> GetUserById(Guid id)
+        {
+            return _db.Connection.QueryFirstAsync<User>("SELECT * FROM ACCOUNT WHERE Id = @Id ", new { @Id = id });
+        }
+
+        public Task<User> GetUserIdByFid(string fid)
+        {
+            return _db.Connection.QueryFirstAsync<User>("SELECT * FROM ACCOUNT WHERE Fid = @Fid ", new {@Fid = fid });
         }
 
         public  Task<bool> ValidateDocument(string document)

@@ -17,6 +17,12 @@ namespace GuaraTech.Repository
         {
             _db = db;
         }
+
+        public async Task<IEnumerable<CanvasCardListDto>> CanvasCardList(Guid id)
+        {
+            return await _db.Connection.QueryAsync<CanvasCardListDto>("SELECT C.ID, C.Title, AC.FullName  FROM CANVAS AS C, TEAM_CANVAS , ACCOUNT AS AC WHERE C.IdUser = @id AND AC.ID = @id OR TEAM_CANVAS.IdUserGuests = @id AND AC.ID = @id", new { @id = id});
+        }
+
         public async Task Create(Canvas canvas)
         {
             await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title ) VALUES (@IdUser, @ID, @Title  )"
@@ -37,6 +43,12 @@ namespace GuaraTech.Repository
         public async Task<CanvasGetBlock> GetCanvasById(Guid id)
         {
              return await _db.Connection.QueryFirstOrDefaultAsync<CanvasGetBlock>("SELECT ID, IdUser,Title, ValueOffer, CustomerSegment, CommunicationChannels, CustomerRelationship, KeyFeatures, MainActivities, Partnerships, Recipe, Cost FROM CANVAS WHERE ID = @ID", new { @ID = id });
+        }
+
+        public async Task<CanvasDetailsDto> GetDetailsCanvas(Guid id)
+        {
+            
+            return await _db.Connection.QueryFirstOrDefaultAsync<CanvasDetailsDto>("SELECT ID, Title, ValueOffer, CustomerSegment, CommunicationChannels, CustomerRelationship, KeyFeatures, MainActivities, Partnerships, Recipe, Cost FROM CANVAS WHERE ID = @ID", new { @ID = id });
         }
 
         public async Task Update(Canvas canvas)
