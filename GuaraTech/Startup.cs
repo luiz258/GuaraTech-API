@@ -128,7 +128,8 @@ namespace GuaraTech
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader());
+                .AllowAnyHeader()
+                );
 
             app.UseAuthentication();
             app.UseAuthorization();

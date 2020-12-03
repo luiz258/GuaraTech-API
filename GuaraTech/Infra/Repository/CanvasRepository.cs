@@ -20,16 +20,25 @@ namespace GuaraTech.Repository
 
         public async Task<IEnumerable<CanvasCardListDto>> CanvasCardList(Guid id)
         {
-            return await _db.Connection.QueryAsync<CanvasCardListDto>("SELECT C.ID, C.Title, AC.FullName  FROM CANVAS AS C, TEAM_CANVAS , ACCOUNT AS AC WHERE C.IdUser = @id AND AC.ID = @id OR TEAM_CANVAS.IdUserGuests = @id AND AC.ID = @id", new { @id = id});
+            return await _db.Connection.QueryAsync<CanvasCardListDto>("SELECT C.ID, C.Title, AC.FullName  FROM CANVAS AS C, TEAM_CANVAS  AS TC, ACCOUNT AS AC WHERE TC.IdUserGuests = @id AND C.ID = TC.IdCanvas AND AC.ID = TC.IdUserGuests", new { @id = id});
         }
 
         public async Task Create(Canvas canvas)
         {
-            await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title ) VALUES (@IdUser, @ID, @Title  )"
+            await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title, ValueOffer, CustomerSegment, CommunicationChannels, CustomerRelationship ,KeyFeatures, MainActivities, Partnerships, Recipe, Cost  ) VALUES (@IdUser, @ID, @Title, @ValueOffer, @CustomerSegment, @CommunicationChannels, @CustomerRelationship, @KeyFeatures, @MainActivities, @Partnerships, @Recipe, @Cost )"
                , new {
                    @IdUser = canvas.UserId,
                    @ID = canvas.Id,
-                   @Title = canvas.Title
+                   @Title = canvas.Title,
+                   @ValueOffer = canvas.ValueOffer,
+                   @CustomerSegment = canvas.CustomerSegment,
+                   @CommunicationChannels = canvas.CommunicationChannels,
+                   @CustomerRelationship = canvas.CustomerSegment,
+                   @KeyFeatures= canvas.KeyFeatures,
+                   @MainActivities = canvas.MainActivities,
+                   @Partnerships = canvas.Partnerships,
+                   @Recipe = canvas.Recipe,
+                   @Cost = canvas.Cost
                });
         }
 

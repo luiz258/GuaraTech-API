@@ -74,9 +74,12 @@ namespace GuaraTech.Controllers
             if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
 
             var canvas = new Canvas { Id = canvasDto.Id, UserId = id, Title = canvasDto.Title, CommunicationChannels = "", Cost =" ", CustomerRelationship =" ", CustomerSegment = " ", Description =" ", KeyFeatures = " ", MainActivities = " ", Partnerships = " ", Recipe = " ", ValueOffer= " " };
-             await _repCanvas.Create(canvas);
+            var teamCanvas = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = id };
+            
+            await _repCanvas.Create(canvas);
+            await _repTeam.AddUserTeam(teamCanvas);
            
-            return Ok(new { message = "Salvo com sucesso !" });
+            return Ok(new { id= canvasDto.Id, message = "Criado com sucesso !", success = true });
         }
 
 

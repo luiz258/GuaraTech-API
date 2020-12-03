@@ -87,10 +87,10 @@ namespace GuaraTech.Controllers
             var email = await _repAccount.ValidateEmail(model.EmailUser);
 
             if (document)
-                return Ok(new { message = "Cpf já cadastrado!" });
+                return Ok(new { message = "Cpf já cadastrado!", success = false });
 
             if (email)
-                return Ok(new { message = "Email já cadastrado!" });
+                return Ok(new { message = "Email já cadastrado!", success = false });
 
             var password = encryptPassword(model.PasswordUser);
             var userRegister = new User {
