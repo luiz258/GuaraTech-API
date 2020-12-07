@@ -16,6 +16,10 @@ namespace GuaraTech.Repository.IRepository
         Task<User> GetAccount(string EmailUser);
         Task<User> GetUserIdByFid(string fuid);
         Task<User> GetUserById(Guid id);
+        
+        Task UpdateProfile(User user, Guid id);
+        Task AlterPassWord(string password, Guid id);
+
         //Task ResetPassword(string PasswordHash, Guid Id);
     }
 }

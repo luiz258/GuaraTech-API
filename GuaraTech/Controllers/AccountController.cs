@@ -18,9 +18,13 @@ namespace GuaraTech.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _repAccount;
-        public AccountController(IAccountRepository repAccount)
+        private readonly IEmailService  _email;
+        private readonly IHttpContextAccessor _accessor;
+        public AccountController(IAccountRepository repAccount, IEmailService email, IHttpContextAccessor accessor)
         {
             _repAccount = repAccount;
+            _email = email;
+            _accessor = accessor;
         }
 
         [HttpPost]
@@ -65,6 +69,116 @@ namespace GuaraTech.Controllers
 
         }
 
+        [HttpPost]
+        [Route("registerClient")]
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> RegisterClient([FromBody] User model) {
+
+            var document = await _repAccount.ValidateDocument(model.Document);
+            var email = await _repAccount.ValidateEmail(model.EmailUser);
+
+            if (document)
+                return Ok(new { message = "Cpf já cadastrado!", success = false });
+
+            if (email)
+                return Ok(new { message = "Email já cadastrado!", success = false });
+
+            var password = encryptPassword(model.PasswordUser);
+            var userRegister = new User {
+                FullName = model.FullName,
+                Document = model.Document,
+                EmailUser = model.EmailUser,
+                PasswordUser = password,
+                RoleId = model.RoleId,
+                StateAccount = "1",
+                Avatar = model.Avatar,
+
+            };
+
+            await _repAccount.CreateUser(userRegister);
+
+            return Ok(new { message = "Usuário cadastrado !", success = true });
+        }
+
+        [HttpGet]
+        [Route("get-profile")]
+        [Authorize]
+        public async Task<User> GetProfilet()
+        {
+            var id = Guid.Parse(_accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value);
+            var data = await _repAccount.GetUserById(id);
+            data.PasswordUser = "";
+            return data;
+
+        }
+
+        [HttpPut]
+        [Route("profile")]
+        [Authorize]
+        public async Task<ActionResult<User>> Profile([FromBody] UserUpdateDto model)
+        {
+            var id = Guid.Parse(_accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value);
+            var data = await _repAccount.GetUserById(id);
+            if (data == null) return Ok(new { menssage = "Usuario não existe !", sucess = false });
+
+            var userUpdate = new User { EmailUser = model.EmailUser };
+            await _repAccount.UpdateProfile(userUpdate, id);
+
+            return Ok(new { menssage = "Usuario alterado com sucesso !", sucess = true });
+        }
+
+        [HttpPut]
+        [Route("alter-password")]
+        [Authorize]
+        public async Task<ActionResult<AlterPasswordDto>> AlterPassword([FromBody] AlterPasswordDto model)
+        {
+            var id = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
+            var guid = Guid.Parse(id);
+            var ConfirmNewPassword = encryptPassword(model.ConfirmNewPassword);
+            var NewPassword = encryptPassword(model.NewPassword);
+
+            if (ConfirmNewPassword != NewPassword) return Ok(new { menssage = "Senha não conferem !", sucess = false });
+
+             await _repAccount.AlterPassWord(NewPassword, guid);
+
+            return Ok(new { menssage = "Senha alterada com sucesso !", sucess = true });
+
+        }
+
+        [HttpPut]
+        [Route("reset-password")]
+        [Authorize]
+        public async Task<ActionResult<ResetPasswordDto>> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            var id = Guid.Parse(_accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value);
+
+            var user = await _repAccount.GetAccount(model.email);
+            if (user.EmailUser != model.email) return Ok(new { menssage = "Email não existe !", sucess = false });
+
+            var charactersRamdow = alfanumericoAleatorio(4);
+            String NewPassword = $"guara{charactersRamdow}";
+            var password = encryptPassword($"{NewPassword}");
+
+            await _repAccount.AlterPassWord(password, id);
+            var mailSent = _email.Send(user.FullName, user.EmailUser,"SENHA ALTERADA - GUARÁTECH !", $"{NewPassword}");
+
+            if (!mailSent) return Ok(new { menssage = "Erro ao enviar senha no e-mail", sucess = false });
+
+            return Ok(new { menssage = "Senha alterada com sucesso !", sucess = true });
+
+        }
+
+        protected string alfanumericoAleatorio(int tamanho)
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = new Random();
+            var result = new string(
+                Enumerable.Repeat(chars, tamanho)
+                          .Select(s => s[random.Next(s.Length)])
+                          .ToArray());
+            return result;
+        }
+
         protected string encryptPassword(string password)
         {
             if (string.IsNullOrEmpty(password)) return "";
@@ -78,36 +192,7 @@ namespace GuaraTech.Controllers
             return sbString.ToString();
         }
 
-        [HttpPost]
-        [Route("registerClient")]
-        [AllowAnonymous]
-        public async Task<ActionResult<User>> RegisterClient([FromBody] User model){
+      
 
-            var document = await _repAccount.ValidateDocument(model.Document);
-            var email = await _repAccount.ValidateEmail(model.EmailUser);
-
-            if (document)
-                return Ok(new { message = "Cpf já cadastrado!", success = false });
-
-            if (email)
-                return Ok(new { message = "Email já cadastrado!", success = false });
-
-            var password = encryptPassword(model.PasswordUser);
-            var userRegister = new User {
-                FullName = model.FullName, 
-                Document = model.Document, 
-                EmailUser = model.EmailUser,
-                PasswordUser = password,
-                RoleId = model.RoleId ,
-                StateAccount = "1", 
-                Avatar = model.Avatar,
-                
-            };
-
-             await _repAccount.CreateUser(userRegister);
-
-            return Ok(new { message = "Usuário cadastrado !", success = true });
-        }
-
-    }
+    } 
 }

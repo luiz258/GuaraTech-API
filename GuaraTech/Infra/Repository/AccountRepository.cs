@@ -64,6 +64,25 @@ namespace GuaraTech.Repository
             return _db.Connection.QueryFirstAsync<User>("SELECT * FROM ACCOUNT WHERE Fid = @Fid ", new {@Fid = fid });
         }
 
+        public  Task AlterPassWord(string password, Guid id)
+        {
+           
+            return _db.Connection.ExecuteAsync("UPDATE ACCOUNT SET PasswordUser = @password where ID = @id", new  {@password = password, @id =id });
+        }
+
+        public Task UpdateProfile(User user, Guid id)
+        {
+            //var sql = "";
+            //using (var com =  _db.Connection)
+            //{
+
+            //    var data = await com.ExecuteAsync(sql, user);
+            //}
+
+            return _db.Connection.ExecuteAsync("update ACCOUNT set EmailUser = @EmailUser WHERE ID = @ID ", new { @EmailUser = user.EmailUser, @ID =id });
+
+        }
+
         public  Task<bool> ValidateDocument(string document)
         {
             return _db.Connection.QueryFirstAsync<bool>("SELECT CASE WHEN EXISTS( SELECT document FROM ACCOUNT WHERE document = @document) THEN CAST( 1 AS BIT) ELSE CAST(0 AS BIT)  END", new { @document = document });

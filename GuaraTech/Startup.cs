@@ -17,6 +17,8 @@ using Microsoft.Extensions.PlatformAbstractions;
 using GuaraTech.Hubs;
 using GuaraTech.Infra.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
+using GuaraTech.Services;
+using GuaraTech.Models;
 
 namespace GuaraTech
 {
@@ -39,6 +41,12 @@ namespace GuaraTech
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+            services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IEmailbody, EmailBodyService>();
+
+
             services.AddScoped<DBContext, DBContext>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAccountRepository, AccountRepository>();
