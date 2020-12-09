@@ -8,6 +8,7 @@ namespace GuaraTech.DTO
     public class AlterPasswordDto
     {
 
+        public String LastPassword { get; set; }
         public String NewPassword { get; set; }
         public String ConfirmNewPassword { get; set; }
     }

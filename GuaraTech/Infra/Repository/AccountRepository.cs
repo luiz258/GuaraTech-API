@@ -51,7 +51,7 @@ namespace GuaraTech.Repository
 
         public Task<User> GetAccount(string EmailUser)
         {
-            return _db.Connection.QueryFirstAsync<User>("SELECT * FROM ACCOUNT WHERE EmailUser = @EmailUser ", new { @EmailUser = EmailUser });
+            return _db.Connection.QueryFirstOrDefaultAsync<User>("SELECT * FROM ACCOUNT WHERE EmailUser = @EmailUser ", new { @EmailUser = EmailUser });
         }
 
         public Task<User> GetUserById(Guid id)

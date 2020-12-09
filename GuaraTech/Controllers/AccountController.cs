@@ -83,6 +83,7 @@ namespace GuaraTech.Controllers
             if (email)
                 return Ok(new { message = "Email já cadastrado!", success = false });
 
+
             var password = encryptPassword(model.PasswordUser);
             var userRegister = new User {
                 FullName = model.FullName,
@@ -119,12 +120,12 @@ namespace GuaraTech.Controllers
         {
             var id = Guid.Parse(_accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value);
             var data = await _repAccount.GetUserById(id);
-            if (data == null) return Ok(new { menssage = "Usuario não existe !", sucess = false });
+            if (data == null) return Ok(new { message = "Usuario não existe !", success = false });
 
             var userUpdate = new User { EmailUser = model.EmailUser };
             await _repAccount.UpdateProfile(userUpdate, id);
 
-            return Ok(new { menssage = "Usuario alterado com sucesso !", sucess = true });
+            return Ok(new { message = "Usuario alterado com successo !", success = true });
         }
 
         [HttpPut]
@@ -134,37 +135,45 @@ namespace GuaraTech.Controllers
         {
             var id = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
             var guid = Guid.Parse(id);
+            var user = await _repAccount.GetUserById(guid);
+
+            var LastPassword = encryptPassword(model.LastPassword);
+
+            if (LastPassword != user.PasswordUser) return Ok(new { message = "A antiga senha não confere !", success = false });
+
             var ConfirmNewPassword = encryptPassword(model.ConfirmNewPassword);
             var NewPassword = encryptPassword(model.NewPassword);
 
-            if (ConfirmNewPassword != NewPassword) return Ok(new { menssage = "Senha não conferem !", sucess = false });
+            if (ConfirmNewPassword != NewPassword) return Ok(new { message = "Senha não conferem !", success = false });
 
              await _repAccount.AlterPassWord(NewPassword, guid);
 
-            return Ok(new { menssage = "Senha alterada com sucesso !", sucess = true });
+            return Ok(new { message = "Senha alterada com sucesso !", success = true });
 
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("reset-password")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<ResetPasswordDto>> ResetPassword([FromBody] ResetPasswordDto model)
         {
-            var id = Guid.Parse(_accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value);
 
             var user = await _repAccount.GetAccount(model.email);
-            if (user.EmailUser != model.email) return Ok(new { menssage = "Email não existe !", sucess = false });
+
+            if (user == null) return Ok(new { message = "Email não existe!", success = false });
+            if (user.EmailUser != model.email) return Ok(new { message = "Email não confere!", success = false });
+            if (user.Document != model.cpf) return Ok(new { message = "Cpf não confere!", success = false });
 
             var charactersRamdow = alfanumericoAleatorio(4);
             String NewPassword = $"guara{charactersRamdow}";
             var password = encryptPassword($"{NewPassword}");
 
-            await _repAccount.AlterPassWord(password, id);
+            await _repAccount.AlterPassWord(password, user.Id);
             var mailSent = _email.Send(user.FullName, user.EmailUser,"SENHA ALTERADA - GUARÁTECH !", $"{NewPassword}");
 
-            if (!mailSent) return Ok(new { menssage = "Erro ao enviar senha no e-mail", sucess = false });
+            if (!mailSent) return Ok(new { message = "Erro ao enviar senha no e-mail", success = false });
 
-            return Ok(new { menssage = "Senha alterada com sucesso !", sucess = true });
+            return Ok(new { message = "Senha alterada com sucesso !", success = true });
 
         }
 

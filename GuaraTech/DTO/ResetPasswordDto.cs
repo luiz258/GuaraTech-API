@@ -8,5 +8,6 @@ namespace GuaraTech.DTO
     public class ResetPasswordDto
     {
         public string email { get; set; }
+        public string cpf { get; set; }
     }
 }
