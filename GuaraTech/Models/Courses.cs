@@ -12,6 +12,7 @@ namespace GuaraTech.Models
     {
         public String Title { get; set; }
         public String Details { get; set; }
+        public String Tag { get; set; } // mudar tipo
         public StateCourseEnuns StateCourse { get; set; }
         public IEnumerable<Lesson> Lessons { get; set; }
 

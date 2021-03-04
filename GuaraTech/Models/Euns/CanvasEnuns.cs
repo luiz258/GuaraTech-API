@@ -8,31 +8,31 @@ namespace GuaraTech.Euns
     public enum CanvasEnuns
     {
 
-        //PropostaDeValor = 1,
-        ValueOffer = 1,
+        //Problema = 1,
+        Problem = 1,
 
-        //SeguimentoDeClientes = 2,
-        CustomerSegment = 2,
+        //Solução = 2,
+        Solution = 2,
 
-        //CanaisDeComunicacao = 3,
-        CommunicationChannels = 3,
+        //MetricasChaves = 3,
+        KeyMetrics = 3,
 
-        //RelacionamentoComCliente = 4,
-        CustomerRelationship = 4,
+        //PropostaDeValorUnica = 4,
+        UniqueValueProposition = 4,
 
-        //RecursosPrincipais = 5,
-        KeyFeatures = 5,
+        //VantagemInjusta = 5,
+        UnfairAdvantage = 5,
 
-        //AtividadesPrinicpais =6,
-        MainActivities = 6,
+        //Canal =6,
+        Channels = 6,
 
-        //Parcerias = 7,
-        Partnerships = 7,
+        //Seguimento de Cliente = 7,
+        CustomerSegments = 7,
         
-        //Receita = 8,
-        Recipe = 8,
+        //Custo = 8,
+        Cost = 8,
         
-        //Custo = 9
-        Cost = 9
+        //Receita = 9
+        Revenue = 9
     }
 }

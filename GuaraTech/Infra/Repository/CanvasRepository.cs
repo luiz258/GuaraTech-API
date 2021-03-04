@@ -25,21 +25,21 @@ namespace GuaraTech.Repository
 
         public async Task Create(Canvas canvas)
         {
-            await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title, ValueOffer, CustomerSegment, CommunicationChannels, CustomerRelationship ,KeyFeatures, MainActivities, Partnerships, Recipe, Cost  ) VALUES (@IdUser, @ID, @Title, @ValueOffer, @CustomerSegment, @CommunicationChannels, @CustomerRelationship, @KeyFeatures, @MainActivities, @Partnerships, @Recipe, @Cost )"
+            await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title ) VALUES (@IdUser, @ID, @Title )"
                , new {
                    @IdUser = canvas.UserId,
                    @ID = canvas.Id,
                    @Title = canvas.Title,
-                   @ValueOffer = canvas.ValueOffer,
-                   @CustomerSegment = canvas.CustomerSegment,
-                   @CommunicationChannels = canvas.CommunicationChannels,
-                   @CustomerRelationship = canvas.CustomerSegment,
-                   @KeyFeatures= canvas.KeyFeatures,
-                   @MainActivities = canvas.MainActivities,
-                   @Partnerships = canvas.Partnerships,
-                   @Recipe = canvas.Recipe,
-                   @Cost = canvas.Cost
+ 
                });
+        }
+
+        public async Task Delete(Guid IdCanvas)
+        {
+            using (var conn = _db)
+            {
+                await conn.Connection.ExecuteAsync("Update CANVAS set CanvasState=2 where ID = @Id", new { @Id = IdCanvas });
+            }
         }
 
         public Task<Canvas> GetCanvasBlock(Guid id)
@@ -47,27 +47,24 @@ namespace GuaraTech.Repository
             throw new NotImplementedException();
         }
 
-    
-
         public async Task<CanvasGetBlock> GetCanvasById(Guid id)
         {
-             return await _db.Connection.QueryFirstOrDefaultAsync<CanvasGetBlock>("SELECT ID, IdUser,Title, ValueOffer, CustomerSegment, CommunicationChannels, CustomerRelationship, KeyFeatures, MainActivities, Partnerships, Recipe, Cost FROM CANVAS WHERE ID = @ID", new { @ID = id });
+            return await _db.Connection.QueryFirstOrDefaultAsync<CanvasGetBlock>("SELECT ID, IdUser, Title FROM CANVAS WHERE ID = @ID", new { @ID = id });
         }
 
         public async Task<CanvasDetailsDto> GetDetailsCanvas(Guid id)
         {
             
-            return await _db.Connection.QueryFirstOrDefaultAsync<CanvasDetailsDto>("SELECT ID, Title, ValueOffer, CustomerSegment, CommunicationChannels, CustomerRelationship, KeyFeatures, MainActivities, Partnerships, Recipe, Cost FROM CANVAS WHERE ID = @ID", new { @ID = id });
+            return await _db.Connection.QueryFirstOrDefaultAsync<CanvasDetailsDto>("SELECT ID, IdUser, Title FROM CANVAS WHERE ID = @ID", new { @ID = id });
         }
 
         public async Task Update(Canvas canvas)
         {
             try
             {
-                await _db.Connection.ExecuteAsync("Update CANVAS set @Block=@Description where ID = @Id", new
+                await _db.Connection.ExecuteAsync("Update CANVAS set Title=@Title where ID = @Id", new
                 {
-                    @Block = canvas,
-                    @Description = canvas,
+                    @Title = canvas.Title,
                     @Id = canvas.Id
 
                 });
@@ -79,94 +76,12 @@ namespace GuaraTech.Repository
             }
         }
 
-        public async Task UpdateCommunicationChannels(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set CommunicationChannels=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
 
-            });
-        }
 
-        public async Task UpdateCost(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set Cost=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
+    
 
-            });
-        }
 
-        public async Task UpdateCustomerRelationship(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set CustomerRelationship=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
 
-            });
-        }
-
-        public async Task UpdateCustomerSegment(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set CustomerSegment=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
-
-            });
-        }
-
-        public async Task UpdateKeyFeatures(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set KeyFeatures=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
-
-            });
-        }
-
-        public async Task UpdateMainActivities(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set MainActivities=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
-
-            });
-        }
-
-        public async Task UpdatePartnerships(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set Partnerships=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
-
-            });
-        }
-
-        public async Task UpdateRecipe(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set Recipe=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
-
-            });
-        }
-
-        public async Task UpdateValueOffer(Canvas canvas)
-        {
-            await _db.Connection.ExecuteAsync("Update CANVAS set ValueOffer=@Description where ID = @Id", new
-            {
-                @Description = canvas.Description,
-                @Id = canvas.Id
-
-            });
-        }
+     
     }
 }

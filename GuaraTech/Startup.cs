@@ -19,6 +19,7 @@ using GuaraTech.Infra.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
 using GuaraTech.Services;
 using GuaraTech.Models;
+using GuaraTech.Infra.Repository;
 
 namespace GuaraTech
 {
@@ -52,6 +53,7 @@ namespace GuaraTech
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<ICourseRepository, CourseRepository>();
             services.AddTransient<ICanvasRepository, CanvasRepository>();
+            services.AddTransient<ICanvasPostitRepository, CanvasPostitRepository>();
             services.AddTransient<ICanvasTeamRepository, CanvasTeamRepository>();
 
             services.AddCors();

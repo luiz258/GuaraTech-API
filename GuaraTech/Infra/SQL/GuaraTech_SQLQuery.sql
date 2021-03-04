@@ -20,7 +20,8 @@ CREATE TABLE COURSE(
      ID Uniqueidentifier PRIMARY KEY,
      Title VARCHAR(50),
      Details VARCHAR(220),
-     StateCourse varchar(2)
+     StateCourse int, 
+     Tag int
 )
 
 CREATE TABLE LESSON(
@@ -48,17 +49,17 @@ CREATE TABLE CANVAS (
     ID UNIQUEIDENTIFIER PRIMARY KEY,
     IdUser Uniqueidentifier  FOREIGN KEY REFERENCES ACCOUNT(ID),
     Title VARCHAR(65),
-    ValueOffer VARCHAR(600),
-    CustomerSegment VARCHAR(600),
-    CommunicationChannels VARCHAR(600),
-    CustomerRelationship VARCHAR(600),
-    KeyFeatures VARCHAR(600),
-    MainActivities VARCHAR(600),
-    Partnerships VARCHAR(600),
-    Recipe VARCHAR(600),
-    Cost VARCHAR(600),
+    IsPrivate bit,
+    CanvasState int
 )
 
+CREATE TABLE CANVAS_POSTIT (
+    ID UNIQUEIDENTIFIER PRIMARY KEY,
+    IdCanvas Uniqueidentifier  FOREIGN KEY REFERENCES CANVAS(ID),
+    DescriptionPostit VARCHAR(230),
+    ColorPostit VARCHAR(10),
+    CanvasTypeBlock int,
+)
 
 CREATE TABLE TEAM_CANVAS (
     ID UNIQUEIDENTIFIER PRIMARY KEY,
