@@ -18,7 +18,7 @@ namespace GuaraTech.Infra.Repository
         }
         public async Task Create(CanvasPostit postit)
         {
-            var sql = "INSERT INTO CANVAS_POSTIT (Id, IdCanvas, DescriptionPostit, ColorPostit, CanvasTypeBlock) values (@Id, @IdCanvas, @DescriptionPostit, @ColorPostit, @CanvasTypeBlock)";
+            var sql = "INSERT INTO CANVAS_POSTIT (Id, IdCanvas, DescriptionPostit, ColorPostit, CanvasTypeBlock, DateCreated) values (@Id, @IdCanvas, @DescriptionPostit, @ColorPostit, @CanvasTypeBlock, @DateCreated)";
 
             using (var conn = _db)
             {
@@ -27,7 +27,8 @@ namespace GuaraTech.Infra.Repository
                     @IdCanvas = postit.IdCanvas, 
                     @DescriptionPostit = postit.Description, 
                     @ColorPostit = postit.PostitColor, 
-                    @CanvasTypeBlock = postit.TypeBlockCanvas
+                    @CanvasTypeBlock = postit.TypeBlockCanvas,
+                    DateCreated = postit.DateCreated,
                 });
             }
         }
@@ -65,7 +66,7 @@ namespace GuaraTech.Infra.Repository
         public async Task<IEnumerable<CanvasPostit>> GetPostitByTypeBlock(Guid IdCanvas, 
             CanvasEnuns typeBlock)
         {
-            var sql = "SELECT * FROM CANVAS_POSTIT WHERE IdCanvas = @IdCanvas and CanvasTypeBlock = @typeBlock";
+            var sql = "SELECT * FROM CANVAS_POSTIT WHERE IdCanvas = @IdCanvas and ORDERBY DateCreated ASC";
 
             using (var conn = _db)
             {
@@ -79,7 +80,7 @@ namespace GuaraTech.Infra.Repository
 
         public async Task<IEnumerable<ListPostitDto>> ListPostit(Guid IdCanvas)
         {
-            var sql = "SELECT * FROM CANVAS_POSTIT WHERE IdCanvas = @IdCanvas";
+            var sql = "SELECT * FROM CANVAS_POSTIT WHERE IdCanvas = @IdCanvas ORDER BY DateCreated ASC ";
 
             using (var conn = _db)
             {

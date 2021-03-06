@@ -13,5 +13,6 @@ namespace GuaraTech.Models
         public CanvasEnuns TypeBlockCanvas { get; set; }
         public String Description { get; set; }
         public String PostitColor { get; set; }
+        public DateTime DateCreated { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GuaraTech.Euns;
+using GuaraTech.Models.Euns;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +15,11 @@ namespace GuaraTech.Models
         public Guid UserId { get; set; }
 
         public String Title { get; set; }
+
+        public ECanvasState CanvasState { get; set; }
+
+        public bool IsPrivate { get; set; }
+        public DateTime DateCreated { get; set; }
 
 
 

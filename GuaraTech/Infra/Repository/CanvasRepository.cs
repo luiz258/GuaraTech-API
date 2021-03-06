@@ -20,17 +20,20 @@ namespace GuaraTech.Repository
 
         public async Task<IEnumerable<CanvasCardListDto>> CanvasCardList(Guid id)
         {
-            return await _db.Connection.QueryAsync<CanvasCardListDto>("SELECT C.ID, C.Title, AC.FullName  FROM CANVAS AS C, TEAM_CANVAS  AS TC, ACCOUNT AS AC WHERE TC.IdUserGuests = @id AND C.ID = TC.IdCanvas AND AC.ID = TC.IdUserGuests", new { @id = id});
+            return await _db.Connection.QueryAsync<CanvasCardListDto>("SELECT C.ID, C.Title, AC.FullName  FROM CANVAS AS C, TEAM_CANVAS  AS TC, ACCOUNT AS AC WHERE TC.IdUserGuests = @id AND C.ID = TC.IdCanvas AND AC.ID = TC.IdUserGuests AND C.CanvasState = 0 ORDER BY C.DateCreated DESC ", new { @id = id});
         }
 
         public async Task Create(Canvas canvas)
         {
-            await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title ) VALUES (@IdUser, @ID, @Title )"
+            await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title, IsPrivate, CanvasState,  DateCreated ) VALUES (@IdUser, @ID, @Title, @IsPrivate, @CanvasState, @DateCreated)"
                , new {
+
                    @IdUser = canvas.UserId,
                    @ID = canvas.Id,
                    @Title = canvas.Title,
- 
+                   @IsPrivate = canvas.IsPrivate,
+                   @CanvasState = canvas.CanvasState,
+                   @DateCreated = canvas.DateCreated
                });
         }
 
@@ -38,7 +41,7 @@ namespace GuaraTech.Repository
         {
             using (var conn = _db)
             {
-                await conn.Connection.ExecuteAsync("Update CANVAS set CanvasState=2 where ID = @Id", new { @Id = IdCanvas });
+                await conn.Connection.ExecuteAsync("Update CANVAS set CanvasState=1 where ID = @Id", new { @Id = IdCanvas });
             }
         }
 

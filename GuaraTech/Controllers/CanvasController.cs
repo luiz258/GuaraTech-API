@@ -7,6 +7,7 @@ using GuaraTech.Euns;
 using GuaraTech.Hubs;
 using GuaraTech.Infra.Repository.IRepository;
 using GuaraTech.Models;
+using GuaraTech.Models.Euns;
 using GuaraTech.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -76,7 +77,7 @@ namespace GuaraTech.Controllers
 
             if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
 
-            var canvas = new Canvas { Id = canvasDto.Id, UserId = id, Title = canvasDto.Title};
+            var canvas = new Canvas { Id = canvasDto.Id, UserId = id, Title = canvasDto.Title, CanvasState = ECanvasState.listed, IsPrivate = true, DateCreated = DateTime.Now};
             var teamCanvas = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = id };
             
             await _repCanvas.Create(canvas);
@@ -134,7 +135,7 @@ namespace GuaraTech.Controllers
             var user = await _repAccount.GetUserById(id);
                 if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
             
-        var canvas = new CanvasPostit { Id = Guid.NewGuid(), IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas =  entity.TypeBlockCanvas};
+        var canvas = new CanvasPostit { Id = Guid.NewGuid(), IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas =  entity.TypeBlockCanvas, DateCreated = DateTime.Now};
 
             await _repPostit.Create(canvas);
             return Ok(new { id = canvas.Id, message = "Criado com sucesso !", success = true });

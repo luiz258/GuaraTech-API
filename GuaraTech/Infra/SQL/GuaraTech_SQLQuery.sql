@@ -50,7 +50,8 @@ CREATE TABLE CANVAS (
     IdUser Uniqueidentifier  FOREIGN KEY REFERENCES ACCOUNT(ID),
     Title VARCHAR(65),
     IsPrivate bit,
-    CanvasState int
+    CanvasState int, 
+    DateCreated DateTime,
 )
 
 CREATE TABLE CANVAS_POSTIT (
@@ -59,6 +60,7 @@ CREATE TABLE CANVAS_POSTIT (
     DescriptionPostit VARCHAR(230),
     ColorPostit VARCHAR(10),
     CanvasTypeBlock int,
+    DateCreated DateTime,
 )
 
 CREATE TABLE TEAM_CANVAS (
