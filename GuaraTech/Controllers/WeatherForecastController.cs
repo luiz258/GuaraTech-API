@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 namespace GuaraTech.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("inicio")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

@@ -20,7 +20,7 @@ namespace GuaraTech.Services
         {
             try
             {
-                ///$"<b>Nome:</b> { nome }<br><b>Email:</b> { email }<br><b>Assunto:</b> { assunto }<br><b>Senha:</b> { msg }"
+                //$"<b>Nome:</b> { nome }<br><b>Email:</b> { email }<br><b>Assunto:</b> { assunto }<br><b>Senha:</b> { msg }"
 
                 MailMessage mailMessage = new MailMessage();
                 //Endereço que irá aparecer no e-mail do usuário 

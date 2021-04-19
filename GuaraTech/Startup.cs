@@ -109,14 +109,7 @@ namespace GuaraTech
                       
                     });
 
-                string caminhoAplicacao =
-                    PlatformServices.Default.Application.ApplicationBasePath;
-                string nomeAplicacao =
-                    PlatformServices.Default.Application.ApplicationName;
-                string caminhoXmlDoc =
-                    Path.Combine(caminhoAplicacao, $"{nomeAplicacao}.xml");
-
-                c.IncludeXmlComments(caminhoXmlDoc);
+              
             });
         }
 
@@ -155,7 +148,7 @@ namespace GuaraTech
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<StreamingHub>("/streaminghub");
+                //endpoints.MapHub<StreamingHub>("/streaminghub");
             });
         }
     }

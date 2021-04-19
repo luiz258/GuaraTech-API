@@ -72,13 +72,6 @@ namespace GuaraTech.Repository
 
         public Task UpdateProfile(User user, Guid id)
         {
-            //var sql = "";
-            //using (var com =  _db.Connection)
-            //{
-
-            //    var data = await com.ExecuteAsync(sql, user);
-            //}
-
             return _db.Connection.ExecuteAsync("update ACCOUNT set EmailUser = @EmailUser WHERE ID = @ID ", new { @EmailUser = user.EmailUser, @ID =id });
 
         }
