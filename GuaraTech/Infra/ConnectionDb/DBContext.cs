@@ -12,7 +12,7 @@ namespace GuaraTech.Infra
 
         public DBContext()
         {
-            Connection = new SqlConnection("Server = den1.mssql8.gear.host; Database = guaratechdb; User ID = guaratechdb; Password = De32DsV - F4!O; Encrypt = True; TrustServerCertificate = True");
+            Connection = new SqlConnection("Server = den1.mssql8.gear.host; Database = guaratechdb; User ID = guaratechdb; Password = De32DsV-F4!O;");
             Connection.Open();
         }
 
