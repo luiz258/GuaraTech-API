@@ -16,6 +16,8 @@ namespace GuaraTech.Models
 
         public String Title { get; set; }
 
+        public String DescriptionCanvas { get; set; }
+
         public ECanvasState CanvasState { get; set; }
 
         public bool IsPrivate { get; set; }

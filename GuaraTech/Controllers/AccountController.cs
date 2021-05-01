@@ -28,6 +28,15 @@ namespace GuaraTech.Controllers
         }
 
         [HttpPost]
+        [Route("v1/user/list")]
+        [Authorize]
+        public async Task<IEnumerable<User>> ListUserByEmail(string email)
+        {
+            var list = await _repAccount.Lis(IdCanvas);
+            return list;
+        }
+
+        [HttpPost]
         [Route("login")]
         [AllowAnonymous]
         public async Task<ActionResult<dynamic>> Authenticate([FromBody] loginDTO model)

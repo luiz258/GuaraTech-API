@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GuaraTech.Hubs
 {
-    public class StreamingHub : Hub
+    public class CanvasHub:Hub
     {
     }
 }

@@ -1,5 +1,7 @@
 ﻿using GuaraTech.DTO;
+using GuaraTech.DTO.User;
 using GuaraTech.Models;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace GuaraTech.Repository.IRepository
         Task CreateUser(User user);
         Task<bool> ValidateEmail(string Email);
         Task<bool> ValidateDocument(string document);
+        Task<IEnumerable<ListUserEmail>> ListAccountByEmail(string EmailUser);
         Task<User> GetAccount(string EmailUser);
         Task<User> GetUserIdByFid(string fuid);
         Task<User> GetUserById(Guid id);

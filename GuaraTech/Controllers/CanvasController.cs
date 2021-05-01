@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using GuaraTech.DTO;
@@ -22,10 +23,10 @@ namespace GuaraTech.Controllers
         private readonly IAccountRepository _repAccount;
         private readonly ICanvasTeamRepository _repTeam;
         private readonly ICanvasPostitRepository _repPostit;
-        private readonly IHubContext<StreamingHub> _streaming;
+        protected readonly IHubContext<CanvasHub> _canvasHub;
         private readonly IHttpContextAccessor _accessor;
         public CanvasController(ICanvasRepository repCavas, 
-            IHubContext<StreamingHub> streaming, 
+            [NotNull] IHubContext<CanvasHub> canvasHub, 
             ICanvasTeamRepository repTeam,
             IAccountRepository repAccount,
             IHttpContextAccessor accessor,
@@ -36,7 +37,7 @@ namespace GuaraTech.Controllers
              _repTeam = repTeam;
             _repAccount = repAccount; 
             _repCanvas = repCanvas;
-            _streaming = streaming;
+            _canvasHub = canvasHub;
             _repPostit = repPostit;
             _accessor = accessor;
         }
@@ -77,7 +78,7 @@ namespace GuaraTech.Controllers
 
             if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
 
-            var canvas = new Canvas { Id = canvasDto.Id, UserId = id, Title = canvasDto.Title, CanvasState = ECanvasState.listed, IsPrivate = true, DateCreated = DateTime.Now};
+            var canvas = new Canvas { Id = canvasDto.Id, UserId = id, Title = canvasDto.Title, CanvasState = ECanvasState.listed, IsPrivate = true, DateCreated = DateTime.Now, DescriptionCanvas = canvasDto.DescriptionCanvas};
             var teamCanvas = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = id };
             
             await _repCanvas.Create(canvas);
@@ -138,6 +139,8 @@ namespace GuaraTech.Controllers
         var canvas = new CanvasPostit { Id = Guid.NewGuid(), IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas =  entity.TypeBlockCanvas, DateCreated = DateTime.Now};
 
             await _repPostit.Create(canvas);
+            await _canvasHub.Clients.All.SendAsync("Criar", canvas);
+
             return Ok(new { id = canvas.Id, message = "Criado com sucesso !", success = true });
         }
 
@@ -190,39 +193,6 @@ namespace GuaraTech.Controllers
         {
             var list = await _repPostit.ListPostit(IdCanvas);
             return list;
-        }
-
-        //Team Business
-
-        [HttpGet]
-        [Authorize]
-        [Route("v1/canvas/team")]
-        public async Task<IEnumerable<TeamCanvas>> GetTeam(TeamCanvas team)
-        {
-            var getCanvas = await _repTeam.SearchUsersCanvas(team);
-            return getCanvas;
-        }
-
-        [HttpPost]
-        [Authorize]
-        [Route("v1/canvas/add-team")]
-        public async Task<IActionResult> AddUserOnTeam([FromBody] TeamCanvasDto teamDto)
-        {
-            var Userid = _accessor.HttpContext.User.Claims.Where(a => a.Type == "Id").FirstOrDefault().Value;
-            var id = Guid.Parse(Userid);
-
-            var team = new TeamCanvas { IdCanvas = teamDto.IdCanvas, IdUserGuests = id };
-            
-              var checkQuantityMembersOnCanvas = await _repTeam.GetCanvas(team.IdCanvas);
-              var CheckUserTeam = await _repTeam.SearchUsersCanvas(team);
-
-            if (CheckUserTeam.Count() == 1) return Ok(new { message = "Esse membro ja está no time!", success = false });
-            if (checkQuantityMembersOnCanvas.Count() > 5) return Ok(new { message = "O time só pode counter até 5 membros !", success = false });
-
-            await _repTeam.AddUserTeam(team);
-
-            return Ok(new { message = "Salvo com sucesso !", success = true });
-
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using GuaraTech.DTO;
+using GuaraTech.DTO.User;
 using GuaraTech.Infra;
 using GuaraTech.Models;
 using GuaraTech.Repository.IRepository;
@@ -86,6 +87,11 @@ namespace GuaraTech.Repository
 
             return _db.Connection.QueryFirstAsync<bool>("SELECT CASE WHEN EXISTS( SELECT EmailUser FROM ACCOUNT WHERE EmailUser = @Email) THEN CAST( 1 AS BIT) ELSE CAST(0 AS BIT)  END", new { @Email = Email });
            
+        }
+
+        public Task<IEnumerable<ListUserEmail>> ListAccountByEmail(string EmailUser)
+        {
+            throw new NotImplementedException();
         }
     }
 }

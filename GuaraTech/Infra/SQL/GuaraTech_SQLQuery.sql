@@ -49,6 +49,7 @@ CREATE TABLE CANVAS (
     ID UNIQUEIDENTIFIER PRIMARY KEY,
     IdUser Uniqueidentifier  FOREIGN KEY REFERENCES ACCOUNT(ID),
     Title VARCHAR(65),
+    DescriptionCanvas VARCHAR(300),
     IsPrivate bit,
     CanvasState int, 
     DateCreated DateTime,

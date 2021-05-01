@@ -61,9 +61,6 @@ namespace GuaraTech
             services.AddSignalR();
             //services.AddAuthentication
 
-
-
-
             var key = Encoding.ASCII.GetBytes(Key.Secret);
             services.AddAuthentication(x =>
             {
@@ -83,19 +80,6 @@ namespace GuaraTech
                     ValidateAudience = false
                 };
             });
-            //.AddJwtBearer(options =>
-            //{
-                
-            //    options.Authority = "https://securetoken.google.com/guara-tech";
-            //    options.TokenValidationParameters = new TokenValidationParameters
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidIssuer = "https://securetoken.google.com/guara-tech",
-            //        ValidateAudience = true,
-            //        ValidAudience = "guara-tech",
-            //        ValidateLifetime = true
-            //    };
-            //});
 
             services.AddSwaggerGen(c =>
             {
@@ -147,8 +131,9 @@ namespace GuaraTech
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<CanvasHub>("/canvas");
                 endpoints.MapControllers();
-                //endpoints.MapHub<StreamingHub>("/streaminghub");
+               
             });
         }
     }
