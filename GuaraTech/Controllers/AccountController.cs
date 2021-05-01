@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GuaraTech.DTO;
+using GuaraTech.DTO.User;
 using GuaraTech.Models;
 using GuaraTech.Repository.IRepository;
 using GuaraTech.Services;
@@ -30,9 +31,9 @@ namespace GuaraTech.Controllers
         [HttpPost]
         [Route("v1/user/list")]
         [Authorize]
-        public async Task<IEnumerable<User>> ListUserByEmail(string email)
+        public async Task<IEnumerable<ListUserEmail>> ListUserByEmail(string email)
         {
-            var list = await _repAccount.Lis(IdCanvas);
+            var list = await _repAccount.ListAccountByEmail(email);
             return list;
         }
 

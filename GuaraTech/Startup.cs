@@ -58,7 +58,7 @@ namespace GuaraTech
 
             services.AddCors();
             services.AddControllers();
-            services.AddSignalR();
+          
             //services.AddAuthentication
 
             var key = Encoding.ASCII.GetBytes(Key.Secret);
@@ -95,6 +95,8 @@ namespace GuaraTech
 
               
             });
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -121,13 +123,7 @@ namespace GuaraTech
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API GUARÁTECH V1");
-            });
-
-       
+         
 
             app.UseEndpoints(endpoints =>
             {
@@ -135,6 +131,14 @@ namespace GuaraTech
                 endpoints.MapControllers();
                
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API GUARÁTECH V1");
+            });
+
+
         }
     }
 }
