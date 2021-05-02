@@ -139,7 +139,7 @@ namespace GuaraTech.Controllers
         var canvas = new CanvasPostit { Id = Guid.NewGuid(), IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas =  entity.TypeBlockCanvas, DateCreated = DateTime.Now};
 
             await _repPostit.Create(canvas);
-            await _canvasHub.Clients.All.SendAsync("Criar", canvas);
+            await _canvasHub.Clients.All.SendAsync("Postit", canvas);   
 
             return Ok(new { id = canvas.Id, message = "Criado com sucesso !", success = true });
         }

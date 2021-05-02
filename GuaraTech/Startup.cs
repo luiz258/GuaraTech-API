@@ -56,7 +56,15 @@ namespace GuaraTech
             services.AddTransient<ICanvasPostitRepository, CanvasPostitRepository>();
             services.AddTransient<ICanvasTeamRepository, CanvasTeamRepository>();
 
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins("http://localhost:3000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
             services.AddControllers();
           
             //services.AddAuthentication
@@ -108,30 +116,21 @@ namespace GuaraTech
                 app.UseDeveloperExceptionPage();
             }
 
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                );
-
             app.UseAuthentication();
             app.UseAuthorization();
 
-         
-
+            app.UseCors("CorsPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<CanvasHub>("/canvas");
                 endpoints.MapControllers();
                
             });
-
+           
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
