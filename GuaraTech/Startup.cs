@@ -59,7 +59,9 @@ namespace GuaraTech
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:3000")
+                    builder => builder
+                    .WithOrigins("http://localhost:3000")
+                    .WithOrigins("https://guara.tech")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
