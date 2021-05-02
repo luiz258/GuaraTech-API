@@ -189,19 +189,28 @@ namespace GuaraTech.Controllers
 
         [HttpGet]
         [Route("v1/canvas/list-postit/{IdCanvas}")]
-        public async Task<IActionResult> ListPostitCanvas(Guid IdCanvas)
+        public async Task<IEnumerable<ListPostitDto>> ListPostitCanvas(Guid IdCanvas)
         {
             var list = await _repPostit.ListPostit(IdCanvas);
 
-            var problem =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Problem));
-            var solution =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Solution));
-            var keyMetrics =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.KeyMetrics));
-            var uniqueValueProposition =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.UniqueValueProposition));
-            var unfairAdvantage =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.UnfairAdvantage));
-            var channels =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Channels));
-            var customerSegments =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.CustomerSegments));
-            var cost =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Cost));
-            var revenue =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Revenue));
+            return list;
+        }
+
+        [HttpGet]
+        [Route("v2/canvas/list-postit/{IdCanvas}")]
+        public async Task<IActionResult> ListPostitCanvasV2(Guid IdCanvas)
+        {
+            var list = await _repPostit.ListPostit(IdCanvas);
+
+            var problem = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Problem));
+            var solution = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Solution));
+            var keyMetrics = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.KeyMetrics));
+            var uniqueValueProposition = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.UniqueValueProposition));
+            var unfairAdvantage = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.UnfairAdvantage));
+            var channels = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Channels));
+            var customerSegments = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.CustomerSegments));
+            var cost = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Cost));
+            var revenue = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Revenue));
 
 
             var canvas = new ListCanvasByBlockDto();
@@ -215,10 +224,9 @@ namespace GuaraTech.Controllers
             canvas.Cost.AddRange(cost);
             canvas.Revenue.AddRange(revenue);
             return Ok(
-                new {canvas = canvas}
+                new { canvas = canvas }
                 );
         }
-
     }
 }
  

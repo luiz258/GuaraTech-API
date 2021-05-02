@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  guaratech:
+    image: ${DOCKER_REGISTRY-}guaratech
+    build:
+      context: .
+      dockerfile: GuaraTech/Dockerfile
