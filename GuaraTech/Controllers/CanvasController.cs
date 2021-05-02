@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using GuaraTech.DTO;
+using GuaraTech.DTO.Canvas.Postit;
 using GuaraTech.Euns;
 using GuaraTech.Hubs;
 using GuaraTech.Infra.Repository.IRepository;
@@ -188,11 +189,34 @@ namespace GuaraTech.Controllers
 
         [HttpGet]
         [Route("v1/canvas/list-postit/{IdCanvas}")]
-        [Authorize]
-        public async Task<IEnumerable<ListPostitDto>> ListPostitCanvas(Guid IdCanvas)
+        public async Task<IActionResult> ListPostitCanvas(Guid IdCanvas)
         {
             var list = await _repPostit.ListPostit(IdCanvas);
-            return list;
+
+            var problem =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Problem));
+            var solution =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Solution));
+            var keyMetrics =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.KeyMetrics));
+            var uniqueValueProposition =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.UniqueValueProposition));
+            var unfairAdvantage =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.UnfairAdvantage));
+            var channels =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Channels));
+            var customerSegments =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.CustomerSegments));
+            var cost =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Cost));
+            var revenue =  list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Revenue));
+
+
+            var canvas = new ListCanvasByBlockDto();
+            canvas.Problem.AddRange(problem);
+            canvas.Solution.AddRange(solution);
+            canvas.KeyMetrics.AddRange(keyMetrics);
+            canvas.UniqueValueProposition.AddRange(uniqueValueProposition);
+            canvas.UnfairAdvantage.AddRange(unfairAdvantage);
+            canvas.Channels.AddRange(channels);
+            canvas.CustomerSegments.AddRange(customerSegments);
+            canvas.Cost.AddRange(cost);
+            canvas.Revenue.AddRange(revenue);
+            return Ok(
+                new {canvas = canvas}
+                );
         }
 
     }
