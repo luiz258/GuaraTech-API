@@ -62,6 +62,7 @@ namespace GuaraTech
                     builder => builder
                     .WithOrigins("http://localhost:3000")
                     .WithOrigins("https://guara.tech")
+                    .WithOrigins("https://app.guara.tech")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
