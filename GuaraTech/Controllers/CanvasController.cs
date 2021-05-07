@@ -223,6 +223,9 @@ namespace GuaraTech.Controllers
             canvas.CustomerSegments.AddRange(customerSegments);
             canvas.Cost.AddRange(cost);
             canvas.Revenue.AddRange(revenue);
+
+            await _canvasHub.Clients.All.SendAsync("Canvas", canvas);
+
             return Ok(
                 new { canvas = canvas }
                 );
