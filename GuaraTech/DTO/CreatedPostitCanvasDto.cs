@@ -9,11 +9,10 @@ namespace GuaraTech.DTO
 {
     public class CreatedPostitCanvasDto
     {
-        [Required]
         public Guid Id { get; set; }
         [Required]
         public Guid IdCanvas { get; set; }
-        public CanvasEnuns TypeBlockCanvas { get; set; }
+        public int TypeBlockCanvas { get; set; }
         public String Description { get; set; }
         public String PostitColor { get; set; }
     }

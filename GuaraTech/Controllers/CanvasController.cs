@@ -137,12 +137,12 @@ namespace GuaraTech.Controllers
             var user = await _repAccount.GetUserById(id);
                 if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
             
-        var canvas = new CanvasPostit { Id = Guid.NewGuid(), IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas =  entity.TypeBlockCanvas, DateCreated = DateTime.Now};
-
+        var canvas = new CanvasPostit { Id = Guid.NewGuid(), IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas = (CanvasEnuns)entity.TypeBlockCanvas, DateCreated = DateTime.Now};
+          
             await _repPostit.Create(canvas);
-            await _canvasHub.Clients.All.SendAsync("Postit", canvas);   
+            //await _canvasHub.Clients.All.SendAsync("Postit", canvas);   
 
-            return Ok(new { id = canvas.Id, message = "Criado com sucesso !", success = true });
+            return Ok(new { id = canvas.Id, message = "Criado com sucesso !", success = true, canvas= canvas });
         }
 
 
@@ -157,7 +157,7 @@ namespace GuaraTech.Controllers
             var user = await _repAccount.GetUserById(id);
             if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
 
-            var canvas = new CanvasPostit { Id = entity.Id, IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas = entity.TypeBlockCanvas };
+            var canvas = new CanvasPostit { Id = entity.Id, IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas = (CanvasEnuns)entity.TypeBlockCanvas };
 
             await _repPostit.Edit(canvas);
             return Ok(new { message = "Salvo com sucesso!", success = true });
