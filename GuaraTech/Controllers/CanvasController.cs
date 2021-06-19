@@ -227,7 +227,7 @@ namespace GuaraTech.Controllers
             //await _canvasHub.Clients.All.SendAsync("Canvas", canvas);
 
             return Ok(
-                new { canvas = list }
+                new { canvas = canvas }
                 );
         }
     }
