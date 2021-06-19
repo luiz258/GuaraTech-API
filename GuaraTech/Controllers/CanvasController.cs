@@ -137,12 +137,12 @@ namespace GuaraTech.Controllers
             var user = await _repAccount.GetUserById(id);
                 if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
             
-        var canvas = new CanvasPostit { Id = Guid.NewGuid(), IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas = (CanvasEnuns)entity.TypeBlockCanvas, DateCreated = DateTime.Now};
+        var canvas = new CanvasPostit { Id = Guid.NewGuid(), IdCanvas = entity.IdCanvas, DescriptionPostit = entity.Description, ColorPostit = entity.PostitColor, CanvasTypeBlock = (CanvasEnuns)entity.TypeBlockCanvas, DateCreated = DateTime.Now};
           
             await _repPostit.Create(canvas);
             //await _canvasHub.Clients.All.SendAsync("Postit", canvas);   
 
-            return Ok(new { id = canvas.Id, message = "Criado com sucesso !", success = true, canvas= canvas });
+            return Ok(new { id = canvas.Id, message = "Criado com sucesso !", success = true, canvas = canvas });
         }
 
 
@@ -157,7 +157,7 @@ namespace GuaraTech.Controllers
             var user = await _repAccount.GetUserById(id);
             if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
 
-            var canvas = new CanvasPostit { Id = entity.Id, IdCanvas = entity.IdCanvas, Description = entity.Description, PostitColor = entity.PostitColor, TypeBlockCanvas = (CanvasEnuns)entity.TypeBlockCanvas };
+            var canvas = new CanvasPostit { Id = entity.Id, IdCanvas = entity.IdCanvas, DescriptionPostit = entity.Description, ColorPostit = entity.PostitColor, CanvasTypeBlock = (CanvasEnuns)entity.TypeBlockCanvas };
 
             await _repPostit.Edit(canvas);
             return Ok(new { message = "Salvo com sucesso!", success = true });
@@ -202,15 +202,15 @@ namespace GuaraTech.Controllers
         {
             var list = await _repPostit.ListPostit(IdCanvas);
 
-            var problem = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.Problem));
-            var solution = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.Solution));
-            var keyMetrics = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.KeyMetrics));
-            var uniqueValueProposition = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.UniqueValueProposition));
-            var unfairAdvantage = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.UnfairAdvantage));
-            var channels = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.Channels));
-            var customerSegments = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.CustomerSegments));
-            var cost = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.Cost));
-            var revenue = list.Where(x => x.TypeBlockCanvas.Equals(CanvasEnuns.Revenue));
+            var problem = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Problem));
+            var solution = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.Solution));
+            var keyMetrics = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.KeyMetrics));
+            var uniqueValueProposition = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.UniqueValueProposition));
+            var unfairAdvantage = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.UnfairAdvantage));
+            var channels = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Channels));
+            var customerSegments = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.CustomerSegments));
+            var cost = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.Cost));
+            var revenue = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.Revenue));
 
 
             var canvas = new ListCanvasByBlockDto();
@@ -224,10 +224,10 @@ namespace GuaraTech.Controllers
             canvas.Cost.AddRange(cost);
             canvas.Revenue.AddRange(revenue);
 
-            await _canvasHub.Clients.All.SendAsync("Canvas", canvas);
+            //await _canvasHub.Clients.All.SendAsync("Canvas", canvas);
 
             return Ok(
-                new { canvas = canvas }
+                new { canvas = list }
                 );
         }
     }

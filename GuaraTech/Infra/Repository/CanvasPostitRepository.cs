@@ -25,9 +25,9 @@ namespace GuaraTech.Infra.Repository
                 var comand = conn.Connection.Execute(sql, new { 
                     @Id = postit.Id, 
                     @IdCanvas = postit.IdCanvas, 
-                    @DescriptionPostit = postit.Description, 
-                    @ColorPostit = postit.PostitColor, 
-                    @CanvasTypeBlock = postit.TypeBlockCanvas,
+                    @DescriptionPostit = postit.DescriptionPostit, 
+                    @ColorPostit = postit.ColorPostit, 
+                    @CanvasTypeBlock = postit.CanvasTypeBlock,
                     DateCreated = postit.DateCreated,
                 });
             }
@@ -56,9 +56,9 @@ namespace GuaraTech.Infra.Repository
                 {
                     @Id = postit.Id,
                     @IdCanvas = postit.IdCanvas,
-                    @DescriptionPostit = postit.Description,
-                    @ColorPostit = postit.PostitColor,
-                    @CanvasTypeBlock = postit.TypeBlockCanvas,
+                    @DescriptionPostit = postit.DescriptionPostit,
+                    @ColorPostit = postit.ColorPostit,
+                    @CanvasTypeBlock = postit.CanvasTypeBlock,
                 });
             }
         }

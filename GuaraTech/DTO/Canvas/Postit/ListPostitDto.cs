@@ -10,9 +10,9 @@ namespace GuaraTech.Models
     {
         public Guid Id { get; set; }
         public Guid IdCanvas { get; set; }
-        public CanvasEnuns TypeBlockCanvas { get; set; }
-        public String Description { get; set; }
-        public String PostitColor { get; set; }
+        public CanvasEnuns CanvasTypeBlock { get; set; }
+        public String DescriptionPostit { get; set; }
+        public String ColorPostit { get; set; }
         public DateTime DateCreated { get; set; }
     }
 }
