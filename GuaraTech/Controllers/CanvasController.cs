@@ -201,14 +201,14 @@ namespace GuaraTech.Controllers
             var list = await _repPostit.ListPostit(IdCanvas);
 
             var problem = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Problem));
-            var solution = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.Solution));
-            var keyMetrics = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.KeyMetrics));
-            var uniqueValueProposition = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.UniqueValueProposition));
-            var unfairAdvantage = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.UnfairAdvantage));
+            var solution = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Solution));
+            var keyMetrics = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.KeyMetrics));
+            var uniqueValueProposition = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.UniqueValueProposition));
+            var unfairAdvantage = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.UnfairAdvantage));
             var channels = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Channels));
-            var customerSegments = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.CustomerSegments));
-            var cost = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.Cost));
-            var revenue = list.Where(x => x.CanvasTypeBlock.Equals((int)CanvasEnuns.Revenue));
+            var customerSegments = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.CustomerSegments));
+            var cost = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Cost));
+            var revenue = list.Where(x => x.CanvasTypeBlock.Equals(CanvasEnuns.Revenue));
 
 
             var canvas = new ListCanvasByBlockDto();

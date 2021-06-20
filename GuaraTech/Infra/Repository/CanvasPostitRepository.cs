@@ -78,16 +78,17 @@ namespace GuaraTech.Infra.Repository
             }
         }
 
-        public async Task<IEnumerable<ListPostitDto>> ListPostit(Guid IdCanvas)
+        public async Task<List<ListPostitDto>> ListPostit(Guid IdCanvas)
         {
             var sql = "SELECT * FROM CANVAS_POSTIT WHERE IdCanvas = @IdCanvas ORDER BY DateCreated ASC ";
 
             using (var conn = _db)
             {
-                return await conn.Connection.QueryAsync<ListPostitDto>(sql, new
+                var lista = conn.Connection.QueryAsync<ListPostitDto>(sql, new
                 {
                     @IdCanvas = IdCanvas,
-                });
+                }).Result.ToList();
+                return lista;
             }
         }
     }

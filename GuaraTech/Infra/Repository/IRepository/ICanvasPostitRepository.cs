@@ -13,7 +13,7 @@ namespace GuaraTech.Infra.Repository.IRepository
         Task Edit(CanvasPostit course);
         Task Delete(Guid id);
         Task<IEnumerable<CanvasPostit>> GetPostitByTypeBlock(Guid IdCanvas, CanvasEnuns typeBlock);
-        Task<IEnumerable<ListPostitDto>> ListPostit(Guid IdCanvas);
+        Task<List<ListPostitDto>> ListPostit(Guid IdCanvas);
        
     }
 }
