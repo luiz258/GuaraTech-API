@@ -70,8 +70,6 @@ namespace GuaraTech.Controllers
         [Authorize]
         public async Task<IActionResult> CreateCanvas([FromBody] CanvasCreateDto canvasDto)
         {
-            //var b = User.Claims;
-             //var UserId = User.Claims.Where(x => x.Type == "nameid").FirstOrDefault().Value;
             var Userid = _accessor.HttpContext.User.Claims.Where(a =>a.Type == "Id").FirstOrDefault().Value;
             var id = Guid.Parse(Userid);
 
