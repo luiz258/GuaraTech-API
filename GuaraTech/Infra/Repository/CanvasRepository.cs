@@ -20,7 +20,7 @@ namespace GuaraTech.Repository
 
         public async Task<IEnumerable<CanvasCardListDto>> CanvasCardList(Guid id)
         {
-            return await _db.Connection.QueryAsync<CanvasCardListDto>("SELECT C.ID, C.Title, AC.FullName  FROM CANVAS AS C, TEAM_CANVAS  AS TC, ACCOUNT AS AC WHERE TC.IdUserGuests = @id AND C.ID = TC.IdCanvas AND AC.ID = TC.IdUserGuests AND C.CanvasState = 0 ORDER BY C.DateCreated DESC ", new { @id = id});
+            return await _db.Connection.QueryAsync<CanvasCardListDto>("SELECT C.ID, C.Title, AC.FullName, C.IsPrivate, (Select Count( DISTINCT CanvasTypeBlock) C from CANVAS_POSTIT as CP)  as completedPercent FROM CANVAS AS C, TEAM_CANVAS  AS TC, ACCOUNT AS AC WHERE TC.IdUserGuests = @id AND C.ID = TC.IdCanvas AND AC.ID = TC.IdUserGuests AND C.CanvasState = 0 ORDER BY C.DateCreated DESC ", new { @id = id});
         }
 
         public async Task Create(Canvas canvas)

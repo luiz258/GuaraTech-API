@@ -9,6 +9,7 @@ namespace GuaraTech.Repository.IRepository
 {
     public interface ICanvasRepository
     {
+
         Task Create(Canvas canvas);
         Task Update(Canvas canvas);
         Task Delete(Guid IdCanvas);

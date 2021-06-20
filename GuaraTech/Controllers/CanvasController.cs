@@ -79,7 +79,7 @@ namespace GuaraTech.Controllers
 
             if (user == null) return NotFound(new { message = "Usuario não cadastrado!", success = false });
 
-            var canvas = new Canvas { Id = canvasDto.Id, UserId = id, Title = canvasDto.Title, CanvasState = ECanvasState.listed, IsPrivate = true, DateCreated = DateTime.Now, DescriptionCanvas = canvasDto.DescriptionCanvas};
+            var canvas = new Canvas { Id = canvasDto.Id, UserId = id, Title = canvasDto.Title, CanvasState = ECanvasState.listed, IsPrivate = canvasDto.IsPrivate, DateCreated = DateTime.Now, DescriptionCanvas = canvasDto.DescriptionCanvas};
             var teamCanvas = new TeamCanvas { IdCanvas = canvasDto.Id, IdUserGuests = id };
             
             await _repCanvas.Create(canvas);

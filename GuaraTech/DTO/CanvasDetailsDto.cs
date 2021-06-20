@@ -12,6 +12,7 @@ namespace GuaraTech.DTO
 
         public String Title { get; set; }
 
+
       
     }
 }
