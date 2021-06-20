@@ -13,7 +13,7 @@ namespace GuaraTech.DTO
         [Required(ErrorMessage = "O campo {0} é obrigatório !")]
         [StringLength(65, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 3)]
         public String Title { get; set; }
-        public String? DescriptionCanvas { get; set; }
+        public String DescriptionCanvas { get; set; }
         [Required]
         public bool IsPrivate { get; set; }
     }
