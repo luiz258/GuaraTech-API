@@ -25,9 +25,9 @@ namespace GuaraTech.Repository
 
         public async Task Create(Canvas canvas)
         {
-            await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title, IsPrivate, CanvasState,  DateCreated ) VALUES (@IdUser, @ID, @Title, @IsPrivate, @CanvasState, @DateCreated)"
+            await _db.Connection.ExecuteAsync("INSERT INTO CANVAS (IdUser, ID, Title, IsPrivate, CanvasState,  DateCreated,  DescriptionCanvas ) VALUES (@IdUser, @ID, @Title, @IsPrivate, @CanvasState, @DateCreated, @DescriptionCanvas)"
                , new {
-
+                   @DescriptionCanvas = canvas.DescriptionCanvas,
                    @IdUser = canvas.UserId,
                    @ID = canvas.Id,
                    @Title = canvas.Title,
